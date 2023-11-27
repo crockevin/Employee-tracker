@@ -3,21 +3,21 @@ const consoleTable = require('console.table')
 const inquirer = require('inquirer')
 const isNumber = require('is-number')
 
-function viewDepartments() {
+function viewDepartments() {//gets department list and logs it
     getDepartmentList()
         .then(([data]) => {
             console.table(data)
         })
 }
 
-function viewRoles() {
+function viewRoles() {//gets roles list and logs it
     getRoleList()
         .then(([data]) => {
             console.table(data)
         })
 }
 
-function viewEmployees() {
+function viewEmployees() {//gets employee list and logs it
     getEmployeeList()
         .then(([data]) => {
             console.table(data)
@@ -32,8 +32,8 @@ function addDepartment() {
             name: 'depName'
         })
         .then((data) => {
-            db.promise().query('INSERT INTO department (name) VALUES (?)', data.depName)
-            viewDepartments()
+            db.promise().query('INSERT INTO department (name) VALUES (?)', data.depName)// adds department based on user input
+            viewDepartments()// shows result
         })
 
 }
@@ -41,7 +41,7 @@ function addDepartment() {
 function addRole() {
     getDepartmentList()
         .then(([data]) => {
-            const listOfDepartment = data.map((department) => ({
+            const listOfDepartment = data.map((department) => ({// stores a list of departments and their id so user can choose from them
                 name: department.name,
                 value: department.id
             }))
@@ -56,7 +56,7 @@ function addRole() {
                     message: 'What is the salary of this role',
                     name: 'salary',
                     validate: input => {
-                        if (isNumber(input)) {
+                        if (isNumber(input)) {//checks to see if input is a number
                             return true
                         }
                         return 'Please enter a number'
@@ -68,8 +68,8 @@ function addRole() {
                     name: 'depId',
                     choices: listOfDepartment
                 }]).then((data) => {
-                    db.promise().query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [data.title, data.salary, data.depId])
-                    viewRoles()
+                    db.promise().query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [data.title, data.salary, data.depId])//query to add role
+                    viewRoles()// shows result
                 })
         })
 
@@ -78,7 +78,7 @@ function addRole() {
 function addEmployee(first, last, roleId, manId) {
     getRoleList()
         .then(([data]) => {
-            const listOfRoles = data.map((role) => ({
+            const listOfRoles = data.map((role) => ({// stores a list of roles and their id so user can choose from them
                 name: role.title,
                 value: role.id
             }))
@@ -105,12 +105,12 @@ function addEmployee(first, last, roleId, manId) {
                     name: 'manId'
                 },
             ]).then((emp) => {
-                if (emp.manId.trim() !== '') {
+                if (emp.manId.trim() !== '') {//queries based on if manager_id is blank or not
                     db.promise().query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)', [emp.first, emp.last, emp.roleId, emp.manId])
-                    viewEmployees()
+                    viewEmployees()// shows result
                 } else {
                     db.promise().query('INSERT INTO employee (first_name, last_name, role_id) VALUES(?, ?, ?)', [emp.first, emp.last, emp.roleId])
-                    viewEmployees()
+                    viewEmployees()// shows result
                 }
             })
         })
@@ -121,7 +121,7 @@ function addEmployee(first, last, roleId, manId) {
 function updateEmployee() {
     getEmployeeList()
         .then(([data]) => {
-            const listOfEmployee = data.map((employee) => ({
+            const listOfEmployee = data.map((employee) => ({// stores a list of employees and their id so user can choose from them
                 name: employee.first_name,
                 value: employee.id
             }))
@@ -134,7 +134,7 @@ function updateEmployee() {
                 }).then((roleData) => {
                     getRoleList()
                         .then(([data]) => {
-                            const listOfRoles = data.map((role) => ({
+                            const listOfRoles = data.map((role) => ({// stores a list of roles and their id so user can choose from them
                                 name: role.title,
                                 value: role.id
                             }))
@@ -146,15 +146,15 @@ function updateEmployee() {
                                     name: 'roleId'
                                 }
                             ]).then((role) => {
-                                db.promise().query('UPDATE employee SET role_id = ? WHERE id = ?', [role.roleId, roleData.choice])
-                                viewEmployees()
+                                db.promise().query('UPDATE employee SET role_id = ? WHERE id = ?', [role.roleId, roleData.choice])//updates employee based on user inputs
+                                viewEmployees()// shows result
                             })
                         })
                 })
         })
 }
 
-function getEmployeeList() {
+function getEmployeeList() {//These are here so seperate functions can console.table the data, and not do it everytime this is called
     return db.promise().query('SELECT * FROM employee')
 }
 function getRoleList() {
@@ -164,4 +164,4 @@ function getRoleList() {
 function getDepartmentList() {
     return db.promise().query('SELECT * FROM department')
 }
-module.exports = { viewDepartments, viewRoles, viewEmployees, addDepartment, addRole, addEmployee, updateEmployee, getEmployeeList, getRoleList, getDepartmentList }
+module.exports = { viewDepartments, viewRoles, viewEmployees, addDepartment, addRole, addEmployee, updateEmployee }

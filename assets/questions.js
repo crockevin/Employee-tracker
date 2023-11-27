@@ -1,7 +1,7 @@
-const { viewDepartments, viewRoles, viewEmployees, addDepartment, addRole, addEmployee, updateEmployee} = require('./dbQuery')
+const { viewDepartments, viewRoles, viewEmployees, addDepartment, addRole, addEmployee, updateEmployee } = require('./dbQuery')
 
 function inquirerRep(res) {
-    switch (res) {
+    switch (res) {//questions
         case 'View all departments':
             viewDepartments()
             break
@@ -21,7 +21,7 @@ function inquirerRep(res) {
             addEmployee()
             break
         case 'Update an employee role':
-                updateEmployee()
+            updateEmployee()
             break
     }
 }

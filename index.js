@@ -1,8 +1,7 @@
 const inquirer = require('inquirer')
-const db = require('./config/connection')
-const {inquirerRep} = require('./assets/questions')
+const { inquirerRep } = require('./assets/questions')
 
-function init(){
+function init() {
     inquirer.prompt(
         {
             type: 'list',
@@ -11,11 +10,10 @@ function init(){
             name: 'choice',
         }
     )
-    .then((answer) => {
-        const choice = answer.choice
-        inquirerRep(choice)
-    })
+        .then((answer) => {
+            const choice = answer.choice
+            inquirerRep(choice)
+        })
 }
 
 init()
-module.exports = { init }
